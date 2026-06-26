@@ -1,0 +1,25 @@
+﻿<ui:FluentWindow x:Class="ProyectoSoftware.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:viewmodels="clr-namespace:ProyectoSoftware.ViewModels"
+        xmlns:views="clr-namespace:ProyectoSoftware.Views"
+        Title="Sistema de Revisión Técnica Formal"
+        Height="600" Width="900"
+        WindowStartupLocation="CenterScreen"
+        ExtendsContentIntoTitleBar="True"
+        WindowBackdropType="Mica">
+
+    <ui:FluentWindow.Resources>
+        <DataTemplate DataType="{x:Type viewmodels:LoginViewModel}">
+            <views:LoginView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:GerenciaViewModel}">
+        </DataTemplate>
+    </ui:FluentWindow.Resources>
+
+    <Grid Background="Transparent">
+        <ContentControl Content="{Binding CurrentViewModel}" />
+    </Grid>
+
+</ui:FluentWindow>
