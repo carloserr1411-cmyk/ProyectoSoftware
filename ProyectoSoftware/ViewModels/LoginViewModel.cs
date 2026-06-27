@@ -47,7 +47,7 @@ namespace ProyectoSoftware.ViewModels
                         _navigationService.CurrentViewModel = new LiderViewModel();
                         break;
                     case "Ingeniero":
-                        _navigationService.CurrentViewModel = new IngenieroViewModel();
+                        _navigationService.CurrentViewModel = new IngenieroRevisorViewModel();
                         break;
                 }
             }

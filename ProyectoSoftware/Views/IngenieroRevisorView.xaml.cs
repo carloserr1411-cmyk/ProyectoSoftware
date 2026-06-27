@@ -16,9 +16,9 @@ namespace ProyectoSoftware.Views
     /// <summary>
     /// Lógica de interacción para IngenieroView.xaml
     /// </summary>
-    public partial class IngenieroView : UserControl
+    public partial class IngenieroRevisorView : UserControl
     {
-        public IngenieroView()
+        public IngenieroRevisorView()
         {
             InitializeComponent();
         }

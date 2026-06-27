@@ -6,23 +6,23 @@ using System;
 
 namespace ProyectoSoftware.ViewModels
 {
-    public partial class IngenieroViewModel : ObservableObject
+    public partial class IngenieroRevisorViewModel : ObservableObject
     {
         // Tabla principal
         [ObservableProperty]
-        private ObservableCollection<Actividad> _actividadesAsignadas;
+        private ObservableCollection<Actividad>? _actividadesAsignadas;
 
         [ObservableProperty]
-        private Actividad _actividadSeleccionada;
+        private Actividad? _actividadSeleccionada;
 
         // Formulario flotante de Revisión
         [ObservableProperty]
         private bool _isDialogOpen;
 
         [ObservableProperty]
-        private string _observaciones;
+        private string? _observaciones;
 
-        public IngenieroViewModel()
+        public IngenieroRevisorViewModel()
         {
             CargarActividadesMock();
         }

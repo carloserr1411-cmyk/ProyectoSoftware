@@ -29,8 +29,12 @@
             <views:LiderView />
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewmodels:IngenieroViewModel}">
-            <views:IngenieroView />
+        <DataTemplate DataType="{x:Type viewmodels:IngenieroRevisorViewModel}">
+            <views:IngenieroRevisorView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:IngenieroDesarrolladorViewModel}">
+            <views:IngenieroDesarrolladorView />
         </DataTemplate>
     </Window.Resources>
 
