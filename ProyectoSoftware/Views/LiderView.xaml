@@ -3,10 +3,113 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ProyectoSoftware.Views"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:viewmodels="clr-namespace:ProyectoSoftware.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewmodels:LiderViewModel}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
+             d:DesignHeight="600" d:DesignWidth="900"
+             Background="Transparent">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+    
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="Panel del Líder Técnico" FontSize="28" FontWeight="Bold" Foreground="#E5E5E5"/>
+            <TextBlock Text="Actividades terminadas pendientes de Revisión Técnica Formal" FontSize="14" Foreground="#999999" Margin="0,5,0,0"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" Background="Black" CornerRadius="8" Padding="10" Opacity="0.6">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1" Color="Black"/>
+            </Border.Effect>
+
+            <ui:DataGrid ItemsSource="{Binding ActividadesTerminadas}" 
+                         SelectedItem="{Binding ActividadSeleccionada}"
+                         AutoGenerateColumns="False" 
+                         IsReadOnly="True"
+                         HeadersVisibility="Column">
+
+                <ui:DataGrid.Columns>
+                    <DataGridTextColumn Header="ID Proyecto" Binding="{Binding IdProyecto}" Width="110"/>
+                    <DataGridTextColumn Header="Ingeniero Asignado" Binding="{Binding IngenieroAsignado.Nombre}" Width="200"/>
+                    <DataGridTextColumn Header="Actividad" Binding="{Binding NombreActividad}" Width="*"/>
+
+                    <DataGridTemplateColumn Header="Estado" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Background="#E6F4EA" CornerRadius="4" Padding="8,4" HorizontalAlignment="Left">
+                                    <TextBlock Text="{Binding Estado}" Foreground="#137333" FontWeight="SemiBold"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </ui:DataGrid.Columns>
+            </ui:DataGrid>
+        </Border>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <!--<ui:Button Content="Asignar Revisores" 
+                       Command="{Binding AsignarRevisionCommand}"
+                       Icon="PeopleCommunity24"
+                       Appearance="Primary"
+                       Padding="20,10" FontSize="14"/>-->
+            <Button Style="{StaticResource NormalButton}"
+                    Content="Asignar Revisores"
+                    Command="{Binding AsignarRevisionCommand}"
+                    Padding="20,10" FontSize="14" />
+        </StackPanel>
+
+        <Grid Grid.RowSpan="3" 
+              Visibility="{Binding IsDialogOpen, Converter={StaticResource BoolToVis}}"
+              Background="#66000000">
+            <Border Width="450" Background="White" CornerRadius="12" Padding="25"
+                    VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="40" ShadowDepth="10" Opacity="0.3" Color="Black"/>
+                </Border.Effect>
+
+                <StackPanel>
+                    <TextBlock Text="Asignar Revisión Técnica" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="#1A1A1A"/>
+                    <TextBlock Text="{Binding ActividadSeleccionada.NombreActividad, StringFormat='Actividad: {0}'}" 
+                               FontSize="14" Foreground="#0078D4" FontWeight="Medium" Margin="0,0,0,20"/>
+
+                    <TextBlock Text="Selecciona al Primer Revisor:" FontWeight="Medium" Margin="0,0,0,5"/>
+                    <ComboBox ItemsSource="{Binding IngenierosDisponibles}" 
+                              SelectedItem="{Binding Revisor1Seleccionado}"
+                              DisplayMemberPath="Nombre" 
+                              Height="35" Margin="0,0,0,15"/>
+
+                    <TextBlock Text="Selecciona al Segundo Revisor:" FontWeight="Medium" Margin="0,0,0,5"/>
+                    <ComboBox ItemsSource="{Binding IngenierosDisponibles}" 
+                              SelectedItem="{Binding Revisor2Seleccionado}"
+                              DisplayMemberPath="Nombre" 
+                              Height="35" Margin="0,0,0,25"/>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <ui:Button Grid.Column="0" Content="Cancelar" 
+                                   Command="{Binding CerrarDialogoCommand}" 
+                                   Appearance="Secondary" HorizontalAlignment="Stretch" Height="40"/>
+
+                        <ui:Button Grid.Column="2" Content="Confirmar Asignación" 
+                                   Command="{Binding ConfirmarAsignacionCommand}" 
+                                   Appearance="Primary" HorizontalAlignment="Stretch" Height="40"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

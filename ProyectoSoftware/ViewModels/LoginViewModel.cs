@@ -15,10 +15,10 @@ namespace ProyectoSoftware.ViewModels
 
         // Propiedades enlazadas a los TextBox del XAML (Email y Password)
         [ObservableProperty]
-        private string _email;
+        private string? _email;
 
         [ObservableProperty]
-        private string _password;
+        private string? _password;
 
         public LoginViewModel(NavigationService navigationService)
         {
@@ -30,7 +30,7 @@ namespace ProyectoSoftware.ViewModels
         {
             // Simulamos el usuario
             Usuario usuarioAutenticado = new Usuario { 
-                Rol = "Lider", 
+                Rol = "Gerente", 
                 Nombre = "Carlos", 
                 Email = "carloserr1411@hotmail.com", 
                 Password = "1234" 

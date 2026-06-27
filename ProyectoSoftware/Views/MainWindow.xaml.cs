@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
 namespace ProyectoSoftware.Views
@@ -19,6 +20,8 @@ namespace ProyectoSoftware.Views
     {
         public MainWindow()
         {
+            //SystemThemeWatcher.Watch(this, WindowBackdropType.Mica);
+            ApplicationThemeManager.Apply(this);
             InitializeComponent();
         }
     }

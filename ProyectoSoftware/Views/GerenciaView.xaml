@@ -3,10 +3,82 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ProyectoSoftware.Views"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:viewmodels="clr-namespace:ProyectoSoftware.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
+             d:DesignHeight="600" d:DesignWidth="900"
+             Background="Transparent">
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="Panel de Gerencia" FontSize="28" FontWeight="Bold" Foreground="#E5E5E5"/>
+            <TextBlock Text="Monitorización global y administración del sistema" FontSize="14" Foreground="#999999" Margin="0,5,0,0"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" Background="Black" CornerRadius="8" Padding="15" Margin="0,0,0,25" Opacity="0.6">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1" Color="Black"/>
+            </Border.Effect>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <TextBlock Text="Opciones de Administración:" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,20,0" Foreground="#CCC"/>
+
+                <ui:Button Content="Registrar Ingeniero" 
+                           Command="{Binding AbrirRegistroIngenieroCommand}"
+                           Icon="PersonAdd24" Appearance="Secondary" Margin="0,0,10,0"/>
+
+                <ui:Button Content="Registrar Proyecto" 
+                           Command="{Binding AbrirRegistroProyectoCommand}"
+                           Icon="FolderAdd24" Appearance="Secondary" Margin="0,0,10,0"/>
+
+                <ui:Button Content="Asignar Tarea Inicial" 
+                           Command="{Binding AbrirAsignacionTareaCommand}"
+                           Icon="ClipboardTaskAdd24" Appearance="Primary"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Background="Black" CornerRadius="8" Padding="10" Opacity="0.6">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1" Color="Black"/>
+            </Border.Effect>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Estado Global de Actividades" FontWeight="SemiBold" FontSize="16" Margin="10,5,0,15" Foreground="#D5D5D5"/>
+
+                <ui:DataGrid Grid.Row="1" 
+                             ItemsSource="{Binding TodasLasActividades}" 
+                             AutoGenerateColumns="False" 
+                             IsReadOnly="True"
+                             HeadersVisibility="Column">
+
+                    <ui:DataGrid.Columns>
+                        <DataGridTextColumn Header="Proyecto" Binding="{Binding IdProyecto}" Width="80"/>
+                        <DataGridTextColumn Header="Ingeniero Asignado" Binding="{Binding IngenieroAsignado.Nombre}" Width="180"/>
+                        <DataGridTextColumn Header="Actividad" Binding="{Binding NombreActividad}" Width="*"/>
+
+                        <DataGridTemplateColumn Header="Estado" Width="140">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="4" Padding="8,4" HorizontalAlignment="Left" Background="#F3F3F3">
+                                        <TextBlock Text="{Binding Estado}" FontWeight="SemiBold" Foreground="#333"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </ui:DataGrid.Columns>
+                </ui:DataGrid>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>
