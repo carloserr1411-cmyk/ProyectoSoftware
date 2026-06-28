@@ -1,9 +1,10 @@
-﻿using ProyectoSoftware.Services;
+﻿using ProyectoSoftware.DataAccess;
+using ProyectoSoftware.Services;
 using ProyectoSoftware.ViewModels;
+using ProyectoSoftware.Views;
 using System.Configuration;
 using System.Data;
 using System.Windows;
-using ProyectoSoftware.Views;
 
 namespace ProyectoSoftware
 {
@@ -15,6 +16,16 @@ namespace ProyectoSoftware
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            using (var context = new RevisionTecnicaContext())
+            {
+                // 1. Borra cualquier rastro de archivos corruptos o vacíos de 0 bytes
+                context.Database.EnsureDeleted();
+
+                // 2. Lee tus DbSet y tu OnModelCreating, y genera físicamente 
+                // todas las tablas (Usuarios, Proyectos, etc.) con sus datos semilla
+                context.Database.EnsureCreated();
+            }
 
             // 1. Instanciamos el servicio
             NavigationService navigationService = new NavigationService();

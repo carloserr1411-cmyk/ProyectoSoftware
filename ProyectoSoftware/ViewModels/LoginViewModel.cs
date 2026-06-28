@@ -60,7 +60,7 @@ namespace ProyectoSoftware.ViewModels
                         {
                             switch (usuarioAutenticado.Rol)
                             {
-                                case "Gerente":
+                                case "Gerencia":
                                     _navigationService.CurrentViewModel = new GerenciaViewModel();
                                     break;
                                 case "Lider":
