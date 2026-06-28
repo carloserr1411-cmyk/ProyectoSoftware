@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.EntityFrameworkCore;
+using ProyectoSoftware.DataAccess;
 using ProyectoSoftware.Models;
 using System;
 using System.Collections.ObjectModel;
@@ -8,6 +10,8 @@ namespace ProyectoSoftware.ViewModels
 {
     public partial class IngenieroDesarrolladorViewModel : ObservableObject
     {
+        private readonly RevisionTecnicaContext _context;
+
         [ObservableProperty]
         private ObservableCollection<Actividad>? _misActividades;
 
@@ -16,6 +20,7 @@ namespace ProyectoSoftware.ViewModels
 
         public IngenieroDesarrolladorViewModel()
         {
+            _context = new RevisionTecnicaContext();
             CargarMisActividadesMock();
         }
 
@@ -41,30 +46,48 @@ namespace ProyectoSoftware.ViewModels
             };*/
         }
 
+        private void CargarMisActividadesReales()
+        {
+            // Simulamos que el ingeniero con ID 1 inició sesión (cambiarás esto luego con el login real)
+            int idIngenieroLogueado = 1;
+
+            var actividades = _context.Actividades
+                .Include(a => a.Proyecto)
+                .Where(a => a.IdIngenieroAsignado == idIngenieroLogueado &&
+                           (a.Estado == "Pendiente" || a.Estado == "En Corrección"))
+                .ToList();
+
+            MisActividades = new ObservableCollection<Actividad>(actividades);
+        }
+
         [RelayCommand]
         private void CulminarActividad()
         {
-            if (ActividadSeleccionada != null)
+            if (ActividadSeleccionada != null &&
+               (ActividadSeleccionada.Estado == "Pendiente" || ActividadSeleccionada.Estado == "En Corrección"))
             {
-                // Regla de negocio: Solo puede culminar tareas que estén Pendientes o En Corrección
-                if (ActividadSeleccionada.Estado == "Pendiente" || ActividadSeleccionada.Estado == "En Corrección")
+                using (var context = new RevisionTecnicaContext())
                 {
-                    // Actualizamos el estado y la fecha de culminación
-                    ActividadSeleccionada.Estado = "Terminada";
-                    ActividadSeleccionada.FechaCulminacion = DateTime.Now;
+                    // 1. Buscamos la actividad exacta en la base de datos
+                    var actividadDb = context.Actividades
+                        .FirstOrDefault(a => a.IdActividad == ActividadSeleccionada.IdActividad);
 
-                    System.Diagnostics.Debug.WriteLine($"La actividad '{ActividadSeleccionada.NombreActividad}' ha sido marcada como Terminada.");
+                    if (actividadDb != null)
+                    {
+                        // 2. Modificamos los valores
+                        actividadDb.Estado = "Terminada";
+                        actividadDb.FechaCulminacion = DateTime.Now;
 
-                    // En el futuro, aquí guardaremos los cambios con _context.SaveChanges() en EF Core
+                        // 3. Guardamos los cambios en SQL Server
+                        context.SaveChanges();
 
-                    // Forzamos la actualización visual del DataGrid simulado
-                    var temp = MisActividades;
-                    MisActividades = null;
-                    MisActividades = temp;
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("La actividad seleccionada ya fue terminada o está en revisión.");
+                        // 4. Actualizamos la vista localmente
+                        ActividadSeleccionada.Estado = "Terminada";
+                        ActividadSeleccionada.FechaCulminacion = actividadDb.FechaCulminacion;
+
+                        // Refrescamos el DataGrid
+                        CargarMisActividadesReales();
+                    }
                 }
             }
         }

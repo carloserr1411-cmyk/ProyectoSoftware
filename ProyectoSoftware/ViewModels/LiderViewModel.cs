@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.EntityFrameworkCore;
+using ProyectoSoftware.DataAccess;
 using ProyectoSoftware.Models;
 using System.Collections.ObjectModel;
 
@@ -31,32 +33,24 @@ namespace ProyectoSoftware.ViewModels
         public LiderViewModel()
         {
             // Simulamos datos de la base de datos por ahora
-            CargarActividadesMock();
+            CargarActividadesReales();
             CargarIngenierosMock();
         }
 
-        private void CargarActividadesMock()
+        private void CargarActividadesReales()
         {
-            /*ActividadesTerminadas = new ObservableCollection<Actividad>
+            using (var context = new RevisionTecnicaContext())
             {
-                new Actividad
-                {
-                    IdActividad = 1,
-                    IdProyecto = "P01",
-                    Proyecto = new Proyecto { },
-                    NombreActividad = "Modelo del Dominio",
-                    Estado = "Terminada",
-                    IngenieroAsignado = new Usuario { Nombre = "Pablo Daza" }
-                },
-                 new Actividad
-                {
-                    IdActividad = 2,
-                    IdProyecto = "P01",
-                    NombreActividad = "Casos de Uso",
-                    Estado = "Terminada",
-                    IngenieroAsignado = new Usuario { Nombre = "Ana Campos" }
-                }
-            };*/
+                // Traemos solo las actividades que están "Terminadas"
+                // y cargamos la información del Ingeniero asociado.
+                var actividades = context.Actividades
+                    .Include(a => a.IngenieroAsignado)
+                    .Where(a => a.Estado == "Terminada")
+                    .ToList();
+
+                // Actualizamos nuestra propiedad observable
+                ActividadesTerminadas = new ObservableCollection<Actividad>(actividades);
+            }
         }
 
         private void CargarIngenierosMock()
