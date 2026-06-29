@@ -19,11 +19,6 @@ namespace ProyectoSoftware
 
             using (var context = new RevisionTecnicaContext())
             {
-                // 1. Borra cualquier rastro de archivos corruptos o vacíos de 0 bytes
-                context.Database.EnsureDeleted();
-
-                // 2. Lee tus DbSet y tu OnModelCreating, y genera físicamente 
-                // todas las tablas (Usuarios, Proyectos, etc.) con sus datos semilla
                 context.Database.EnsureCreated();
             }
 

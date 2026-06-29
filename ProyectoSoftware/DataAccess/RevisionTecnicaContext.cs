@@ -17,6 +17,11 @@ namespace ProyectoSoftware.DataAccess
         public DbSet<Actividad> Actividades { get; set; }
         public DbSet<Revision> Revisiones { get; set; }
 
+        public RevisionTecnicaContext()
+        {
+            Database.EnsureCreated();
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

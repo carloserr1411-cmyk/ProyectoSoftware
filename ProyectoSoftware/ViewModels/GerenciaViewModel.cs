@@ -98,49 +98,76 @@ namespace ProyectoSoftware.ViewModels
         [RelayCommand]
         private void GuardarIngeniero()
         {
-            // Cláusula de guarda (Validación básica)
-            if (string.IsNullOrWhiteSpace(NombreNuevoIngeniero) || string.IsNullOrWhiteSpace(EmailNuevoIngeniero))
-                return;
-
-            using (var context = new RevisionTecnicaContext())
+            // 1. Cláusula de guarda estricta (Incluimos la validación del Password)
+            if (string.IsNullOrWhiteSpace(NombreNuevoIngeniero) ||
+                string.IsNullOrWhiteSpace(EmailNuevoIngeniero) ||
+                string.IsNullOrWhiteSpace(PasswordNuevoIngeniero))
             {
-                var nuevoUsuario = new Usuario
-                {
-                    Nombre = NombreNuevoIngeniero,
-                    Email = EmailNuevoIngeniero,
-                    Password = PasswordNuevoIngeniero,
-                    Rol = "Ingeniero" // Definimos el rol de forma fija [cite: 500]
-                };
-
-                context.Usuarios.Add(nuevoUsuario);
-                context.SaveChanges();
+                System.Windows.MessageBox.Show("Por favor, llena todos los campos.", "Campos incompletos", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                return;
             }
 
-            CerrarRegistroIngeniero();
+            try
+            {
+                using (var context = new RevisionTecnicaContext())
+                {
+                    var nuevoUsuario = new Usuario
+                    {
+                        Nombre = NombreNuevoIngeniero,
+                        Email = EmailNuevoIngeniero,
+                        Password = PasswordNuevoIngeniero,
+                        Rol = "Ingeniero"
+                    };
+
+                    context.Usuarios.Add(nuevoUsuario);
+                    context.SaveChanges();
+                }
+
+                // 2. Retroalimentación Visual de Éxito
+                System.Windows.MessageBox.Show($"El ingeniero '{NombreNuevoIngeniero}' ha sido registrado exitosamente en el sistema.", "Registro Exitoso", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+
+                CerrarRegistroIngeniero();
+            }
+            catch (System.Exception ex)
+            {
+                // 3. Captura de errores de Base de Datos
+                System.Windows.MessageBox.Show($"Ocurrió un error al guardar en la base de datos:\n\n{ex.InnerException?.Message ?? ex.Message}", "Error Crítico", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
         }
 
         [RelayCommand]
         private void GuardarProyecto()
         {
-            // Cláusula de guarda
             if (string.IsNullOrWhiteSpace(IdNuevoProyecto) || string.IsNullOrWhiteSpace(DescripcionNuevoProyecto))
-                return;
-
-            using (var context = new RevisionTecnicaContext())
             {
-                var nuevoProyecto = new Proyecto
-                {
-                    IdProyecto = IdNuevoProyecto, // Ej: P01 [cite: 497]
-                    Descripcion = DescripcionNuevoProyecto,
-                    Estado = "Activo"
-                };
-
-                context.Proyectos.Add(nuevoProyecto);
-                context.SaveChanges();
+                System.Windows.MessageBox.Show("Por favor, ingresa el ID y la descripción del proyecto.", "Campos incompletos", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                return;
             }
 
-            CerrarRegistroProyecto();
-            CargarDashboard(); // Refrescar la tabla en caso de que sea necesario
+            try
+            {
+                using (var context = new RevisionTecnicaContext())
+                {
+                    var nuevoProyecto = new Proyecto
+                    {
+                        IdProyecto = IdNuevoProyecto,
+                        Descripcion = DescripcionNuevoProyecto,
+                        Estado = "Activo"
+                    };
+
+                    context.Proyectos.Add(nuevoProyecto);
+                    context.SaveChanges();
+                }
+
+                System.Windows.MessageBox.Show($"El proyecto '{IdNuevoProyecto}' ha sido creado exitosamente.", "Proyecto Creado", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+
+                CerrarRegistroProyecto();
+                CargarDashboard();
+            }
+            catch (System.Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Ocurrió un error al guardar el proyecto:\n\n{ex.InnerException?.Message ?? ex.Message}", "Error Crítico", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
         }
     }
 }

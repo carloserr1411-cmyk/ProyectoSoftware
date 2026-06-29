@@ -46,7 +46,7 @@ namespace ProyectoSoftware.ViewModels
                 {
                     // 1. Buscamos al usuario en la base de datos real
                     Usuario? usuarioAutenticado = context.Usuarios
-                        .FirstOrDefault(u => u.Email == Email && u.Password == Password);
+                        .FirstOrDefault(u => u.Email.ToLower() == Email.Trim().ToLower() && u.Password == Password);
 
                     // 2. Redirección dinámica según el rol
                     if (usuarioAutenticado != null)
