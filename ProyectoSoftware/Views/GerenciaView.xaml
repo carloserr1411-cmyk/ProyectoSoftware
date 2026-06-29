@@ -10,76 +10,145 @@
              d:DesignHeight="600" d:DesignWidth="900"
              Background="Transparent">
 
-    <Grid Margin="30">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
 
-        <StackPanel Grid.Row="0" Margin="0,0,0,20">
-            <TextBlock Text="Panel de Gerencia" FontSize="28" FontWeight="Bold" Foreground="#E5E5E5"/>
-            <TextBlock Text="Monitorización global y administración del sistema" FontSize="14" Foreground="#999999" Margin="0,5,0,0"/>
-        </StackPanel>
+    <Grid>
 
-        <Border Grid.Row="1" Background="Black" CornerRadius="8" Padding="15" Margin="0,0,0,25" Opacity="0.6">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1" Color="Black"/>
-            </Border.Effect>
+        <Grid Margin="30">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                <TextBlock Text="Opciones de Administración:" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,20,0" Foreground="#CCC"/>
-
-                <ui:Button Content="Registrar Ingeniero" 
-                           Command="{Binding AbrirRegistroIngenieroCommand}"
-                           Icon="PersonAdd24" Appearance="Secondary" Margin="0,0,10,0"/>
-
-                <ui:Button Content="Registrar Proyecto" 
-                           Command="{Binding AbrirRegistroProyectoCommand}"
-                           Icon="FolderAdd24" Appearance="Secondary" Margin="0,0,10,0"/>
-
-                <ui:Button Content="Asignar Tarea Inicial" 
-                           Command="{Binding AbrirAsignacionTareaCommand}"
-                           Icon="ClipboardTaskAdd24" Appearance="Primary"/>
+            <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                <TextBlock Text="Panel de Gerencia" FontSize="28" FontWeight="Bold" Foreground="#E5E5E5"/>
+                <TextBlock Text="Monitorización global y administración del sistema" FontSize="14" Foreground="#999999" Margin="0,5,0,0"/>
             </StackPanel>
-        </Border>
 
-        <Border Grid.Row="2" Background="Black" CornerRadius="8" Padding="10" Opacity="0.6">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1" Color="Black"/>
-            </Border.Effect>
+            <Border Grid.Row="1" Background="Black" CornerRadius="8" Padding="15" Margin="0,0,0,25" Opacity="0.6">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1" Color="Black"/>
+                </Border.Effect>
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <TextBlock Text="Opciones de Administración:" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,20,0" Foreground="#CCC"/>
 
-                <TextBlock Grid.Row="0" Text="Estado Global de Actividades" FontWeight="SemiBold" FontSize="16" Margin="10,5,0,15" Foreground="#D5D5D5"/>
+                    <ui:Button Content="Registrar Ingeniero" 
+                               Command="{Binding AbrirRegistroIngenieroCommand}"
+                               Icon="PersonAdd24" Appearance="Secondary" Margin="0,0,10,0"/>
 
-                <ui:DataGrid Grid.Row="1" 
-                             ItemsSource="{Binding TodasLasActividades}" 
-                             AutoGenerateColumns="False" 
-                             IsReadOnly="True"
-                             HeadersVisibility="Column">
+                    <ui:Button Content="Registrar Proyecto" 
+                               Command="{Binding AbrirRegistroProyectoCommand}"
+                               Icon="FolderAdd24" Appearance="Secondary" Margin="0,0,10,0"/>
 
-                    <ui:DataGrid.Columns>
-                        <DataGridTextColumn Header="Proyecto" Binding="{Binding IdProyecto}" Width="80"/>
-                        <DataGridTextColumn Header="Ingeniero Asignado" Binding="{Binding IngenieroAsignado.Nombre}" Width="180"/>
-                        <DataGridTextColumn Header="Actividad" Binding="{Binding NombreActividad}" Width="*"/>
+                    <ui:Button Content="Asignar Tarea Inicial" 
+                               Command="{Binding AbrirAsignacionTareaCommand}"
+                               Icon="ClipboardTaskAdd24" Appearance="Primary"/>
+                </StackPanel>
+            </Border>
 
-                        <DataGridTemplateColumn Header="Estado" Width="140">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Border CornerRadius="4" Padding="8,4" HorizontalAlignment="Left" Background="#F3F3F3">
-                                        <TextBlock Text="{Binding Estado}" FontWeight="SemiBold" Foreground="#333"/>
-                                    </Border>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </ui:DataGrid.Columns>
-                </ui:DataGrid>
+            <Border Grid.Row="2" Background="Black" CornerRadius="8" Padding="10" Opacity="0.6">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1" Color="Black"/>
+                </Border.Effect>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Estado Global de Actividades" FontWeight="SemiBold" FontSize="16" Margin="10,5,0,15" Foreground="#D5D5D5"/>
+
+                    <ui:DataGrid Grid.Row="1" 
+                                 ItemsSource="{Binding ActividadesGlobales}" 
+                                 AutoGenerateColumns="False" 
+                                 IsReadOnly="True"
+                                 HeadersVisibility="Column">
+
+                        <ui:DataGrid.Columns>
+                            <DataGridTextColumn Header="Proyecto" Binding="{Binding IdProyecto}" Width="80"/>
+                            <DataGridTextColumn Header="Ingeniero Asignado" Binding="{Binding IngenieroAsignado.Nombre}" Width="180"/>
+                            <DataGridTextColumn Header="Actividad" Binding="{Binding NombreActividad}" Width="*"/>
+
+                            <DataGridTemplateColumn Header="Estado" Width="140">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border CornerRadius="4" Padding="8,4" HorizontalAlignment="Left" Background="#F3F3F3">
+                                            <TextBlock Text="{Binding Estado}" FontWeight="SemiBold" Foreground="#333"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </ui:DataGrid.Columns>
+                    </ui:DataGrid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Grid Visibility="{Binding IsRegistroIngenieroOpen, Converter={StaticResource BooleanToVisibilityConverter}}" Panel.ZIndex="100">
+            <Grid Background="#B2000000">
+                <Grid.InputBindings>
+                    <MouseBinding MouseAction="LeftClick" Command="{Binding CerrarRegistroIngenieroCommand}"/>
+                </Grid.InputBindings>
             </Grid>
-        </Border>
+
+            <Border Background="#1C1C1C" Width="380" Padding="30" CornerRadius="12" HorizontalAlignment="Center" VerticalAlignment="Center" BorderBrush="#333" BorderThickness="1">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="25" ShadowDepth="5" Opacity="0.5" Color="Black"/>
+                </Border.Effect>
+
+                <StackPanel>
+                    <TextBlock Text="Nuevo Ingeniero" FontSize="22" FontWeight="Bold" Foreground="#E5E5E5" Margin="0,0,0,20"/>
+
+                    <TextBlock Text="Nombre Completo" Foreground="#999" Margin="0,0,0,5"/>
+                    <ui:TextBox Text="{Binding NombreNuevoIngeniero, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Ej: Pablo Daza" Margin="0,0,0,15"/>
+
+                    <TextBlock Text="Correo Electrónico" Foreground="#999" Margin="0,0,0,5"/>
+                    <ui:TextBox Text="{Binding EmailNuevoIngeniero, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="ejemplo@sistema.com" Margin="0,0,0,15"/>
+
+                    <TextBlock Text="Contraseña" Foreground="#999" Margin="0,0,0,5"/>
+                    <ui:TextBox Text="{Binding PasswordNuevoIngeniero, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Mínimo 6 caracteres" Margin="0,0,0,25"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <ui:Button Content="Cancelar" Command="{Binding CerrarRegistroIngenieroCommand}" Appearance="Transparent" Foreground="#CCC" Margin="0,0,10,0"/>
+                        <ui:Button Content="Guardar Ingeniero" Command="{Binding GuardarIngenieroCommand}" Appearance="Primary" Icon="Save24"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Grid Visibility="{Binding IsRegistroProyectoOpen, Converter={StaticResource BooleanToVisibilityConverter}}" Panel.ZIndex="100">
+            <Grid Background="#B2000000">
+                <Grid.InputBindings>
+                    <MouseBinding MouseAction="LeftClick" Command="{Binding CerrarRegistroProyectoCommand}"/>
+                </Grid.InputBindings>
+            </Grid>
+
+            <Border Background="#1C1C1C" Width="380" Padding="30" CornerRadius="12" HorizontalAlignment="Center" VerticalAlignment="Center" BorderBrush="#333" BorderThickness="1">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="25" ShadowDepth="5" Opacity="0.5" Color="Black"/>
+                </Border.Effect>
+
+                <StackPanel>
+                    <TextBlock Text="Nuevo Proyecto" FontSize="22" FontWeight="Bold" Foreground="#E5E5E5" Margin="0,0,0,20"/>
+
+                    <TextBlock Text="Código del Proyecto (ID)" Foreground="#999" Margin="0,0,0,5"/>
+                    <ui:TextBox Text="{Binding IdNuevoProyecto, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Ej: P01" Margin="0,0,0,15"/>
+
+                    <TextBlock Text="Descripción" Foreground="#999" Margin="0,0,0,5"/>
+                    <ui:TextBox Text="{Binding DescripcionNuevoProyecto, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Detalles y objetivos del proyecto..." Height="90" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,0,0,25"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <ui:Button Content="Cancelar" Command="{Binding CerrarRegistroProyectoCommand}" Appearance="Transparent" Foreground="#CCC" Margin="0,0,10,0"/>
+                        <ui:Button Content="Guardar Proyecto" Command="{Binding GuardarProyectoCommand}" Appearance="Primary" Icon="Save24"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
     </Grid>
 </UserControl>

@@ -1,53 +1,146 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ProyectoSoftware.DataAccess;
 using ProyectoSoftware.Models;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace ProyectoSoftware.ViewModels
 {
     public partial class GerenciaViewModel : ObservableObject
     {
-        // Lista observable para la tabla principal
+        // ==========================================
+        // 1. GESTIÓN DE VISIBILIDAD DE LOS DIÁLOGOS
+        // ==========================================
         [ObservableProperty]
-        private ObservableCollection<Actividad>? _todasLasActividades;
+        private bool _isRegistroIngenieroOpen;
+
+        [ObservableProperty]
+        private bool _isRegistroProyectoOpen;
+
+        [ObservableProperty]
+        private bool _isAsignacionTareaOpen;
+
+        // ==========================================
+        // 2. PROPIEDADES DEL FORMULARIO DE INGENIERO
+        // ==========================================
+        [ObservableProperty]
+        private string _nombreNuevoIngeniero = string.Empty;
+
+        [ObservableProperty]
+        private string _emailNuevoIngeniero = string.Empty;
+
+        [ObservableProperty]
+        private string _passwordNuevoIngeniero = string.Empty;
+
+        // ==========================================
+        // 3. PROPIEDADES DEL FORMULARIO DE PROYECTO
+        // ==========================================
+        [ObservableProperty]
+        private string _idNuevoProyecto = string.Empty;
+
+        [ObservableProperty]
+        private string _descripcionNuevoProyecto = string.Empty;
+
+        // Propiedad para la tabla del Dashboard (Monitor global)
+        [ObservableProperty]
+        private ObservableCollection<Actividad> _actividadesGlobales = new();
 
         public GerenciaViewModel()
         {
-            // Simulamos la carga de datos (En la realidad esto viene de _context.Actividades.ToList())
-            CargarDatosGlobales();
+            CargarDashboard();
         }
 
-        private void CargarDatosGlobales()
+        private void CargarDashboard()
         {
-            /*TodasLasActividades = new ObservableCollection<Actividad>
+            // Aquí puedes cargar la tabla general leyendo el RevisionTecnicaContext
+            using (var context = new RevisionTecnicaContext())
             {
-                new Actividad { IdProyecto = "P01", NombreActividad = "Modelo del Dominio", Estado = "Terminada", IngenieroAsignado = new Usuario { Nombre = "Pablo Daza" } },
-                new Actividad { IdProyecto = "P01", NombreActividad = "Casos de Uso", Estado = "Pendiente", IngenieroAsignado = new Usuario { Nombre = "Ana Campos" } },
-                new Actividad { IdProyecto = "P02", NombreActividad = "Diseño de BD", Estado = "En Revisión", IngenieroAsignado = new Usuario { Nombre = "Luis Torres" } }
-            };*/
+                ActividadesGlobales = new ObservableCollection<Actividad>(context.Actividades.ToList());
+            }
         }
 
-        // --- Comandos para las acciones de Gerencia ---
+        // ==========================================
+        // COMANDOS DE APERTURA Y CIERRE
+        // ==========================================
+        [RelayCommand]
+        private void AbrirRegistroIngeniero() => IsRegistroIngenieroOpen = true;
 
         [RelayCommand]
-        private void AbrirRegistroIngeniero()
+        private void CerrarRegistroIngeniero()
         {
-            // Aquí la lógica para abrir la vista/diálogo de registro de ingeniero
-            System.Diagnostics.Debug.WriteLine("Abriendo formulario para Registrar Ingeniero...");
-        }
-
-        [RelayCommand]
-        private void AbrirRegistroProyecto()
-        {
-            // Aquí la lógica para abrir la vista/diálogo de registro de proyecto
-            System.Diagnostics.Debug.WriteLine("Abriendo formulario para Registrar Proyecto...");
+            IsRegistroIngenieroOpen = false;
+            NombreNuevoIngeniero = string.Empty;
+            EmailNuevoIngeniero = string.Empty;
+            PasswordNuevoIngeniero = string.Empty;
         }
 
         [RelayCommand]
-        private void AbrirAsignacionTarea()
+        private void AbrirRegistroProyecto() => IsRegistroProyectoOpen = true;
+
+        [RelayCommand]
+        private void CerrarRegistroProyecto()
         {
-            // Aquí la lógica para asignar una nueva tarea inicial (Estado Pendiente)
-            System.Diagnostics.Debug.WriteLine("Abriendo formulario para Asignar Tarea...");
+            IsRegistroProyectoOpen = false;
+            IdNuevoProyecto = string.Empty;
+            DescripcionNuevoProyecto = string.Empty;
+        }
+
+        [RelayCommand]
+        private void AbrirAsignacionTarea() => IsAsignacionTareaOpen = true;
+
+        [RelayCommand]
+        private void CerrarAsignacionTarea() => IsAsignacionTareaOpen = false;
+
+        // ==========================================
+        // COMANDOS DE BASE DE DATOS (EF CORE)
+        // ==========================================
+        [RelayCommand]
+        private void GuardarIngeniero()
+        {
+            // Cláusula de guarda (Validación básica)
+            if (string.IsNullOrWhiteSpace(NombreNuevoIngeniero) || string.IsNullOrWhiteSpace(EmailNuevoIngeniero))
+                return;
+
+            using (var context = new RevisionTecnicaContext())
+            {
+                var nuevoUsuario = new Usuario
+                {
+                    Nombre = NombreNuevoIngeniero,
+                    Email = EmailNuevoIngeniero,
+                    Password = PasswordNuevoIngeniero,
+                    Rol = "Ingeniero" // Definimos el rol de forma fija [cite: 500]
+                };
+
+                context.Usuarios.Add(nuevoUsuario);
+                context.SaveChanges();
+            }
+
+            CerrarRegistroIngeniero();
+        }
+
+        [RelayCommand]
+        private void GuardarProyecto()
+        {
+            // Cláusula de guarda
+            if (string.IsNullOrWhiteSpace(IdNuevoProyecto) || string.IsNullOrWhiteSpace(DescripcionNuevoProyecto))
+                return;
+
+            using (var context = new RevisionTecnicaContext())
+            {
+                var nuevoProyecto = new Proyecto
+                {
+                    IdProyecto = IdNuevoProyecto, // Ej: P01 [cite: 497]
+                    Descripcion = DescripcionNuevoProyecto,
+                    Estado = "Activo"
+                };
+
+                context.Proyectos.Add(nuevoProyecto);
+                context.SaveChanges();
+            }
+
+            CerrarRegistroProyecto();
+            CargarDashboard(); // Refrescar la tabla en caso de que sea necesario
         }
     }
 }
